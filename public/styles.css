@@ -1,0 +1,119 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  position: relative;
+  font-family: sans-serif;
+  max-width: 1200px;
+  height: 100vh;
+  margin: 0 auto;
+  background: #ddd;
+}
+
+#app {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+
+  display: grid;
+  gap: 10px;
+  grid-template-rows: 5em 1fr 5em 1fr;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: 
+      "html-head  render-head" 
+      "html       render" 
+      "css-head   error-head" 
+      "css        error" 
+}
+
+iframe {
+  background: white;
+  border: none;
+}
+
+textarea {
+  background: #111;
+  color: #eee;
+  font-family: monospace;
+  padding: 1em;
+  border: none;
+}
+
+h3 {
+  font-size: 1.2em;
+  margin: 0;
+}
+
+button {
+  background: black;
+  color: white;
+  border: none;
+  padding: .5em;
+  box-shadow: 0 2px 6px -2px black;
+}
+
+#html-head {
+  grid-area: html-head;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  border: 1px solid black;
+  background: white;
+}
+
+#css-head {
+  grid-area: css-head;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  border: 1px solid black;
+  background: white;
+}
+
+#render-head {
+  grid-area: render-head;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  border: 1px solid black;
+  background: white;
+}
+
+#error-head {
+  grid-area: error-head;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  border: 1px solid black;
+  background: white;
+}
+
+#html {
+  grid-area: html;
+}
+
+#css {
+  grid-area: css;
+}
+
+#render {
+  grid-area: render;
+  height: 100%;
+  width: 100%;
+}
+
+#error {
+  font-family: monospace;
+  background-color: #402;
+  color: white;
+  grid-area: error;
+  overflow-y: scroll;
+  padding: 1em;
+}

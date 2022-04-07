@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <div id="html-head">
+      <h3>Write Your HTML Below</h3>
+      <div class="actions">
+        <button data-url="/html_hint">HTML Hint</button>
+      </div>
+    </div>
+    <textarea id="html"></textarea>
+    <div id="css-head">
+      <h3>Write your CSS Below</h3>
+      <div class="actions">
+        <button data-url="/validate_css">Validate CSS</button>
+        <button data-url="/stylelint">Stylelint</button>
+      </div>
+    </div>
+    <textarea id="css"></textarea>
+    <div id="render-head">
+      <h2>Live Preview</h2>
+    </div>
+    <iframe id="render" src="render_iframe.html"></iframe>
+    <div id="error-head">
+      <h2>Error Text Below</h2>
+    </div>
+    <div id="error"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
