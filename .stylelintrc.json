@@ -9,9 +9,7 @@
     "declaration-block-no-duplicate-properties": [
       true,
       {
-        "ignore": [
-          "consecutive-duplicates-with-different-values"
-        ]
+        "ignore": ["consecutive-duplicates-with-different-values"]
       }
     ],
     "declaration-block-no-shorthand-property-overrides": true,
@@ -37,9 +35,7 @@
     "selector-type-no-unknown": [
       true,
       {
-        "ignore": [
-          "custom-elements"
-        ]
+        "ignore": ["custom-elements"]
       }
     ],
     "string-no-newline": true,
@@ -47,21 +43,14 @@
     "alpha-value-notation": [
       "percentage",
       {
-        "exceptProperties": [
-          "opacity"
-        ]
+        "exceptProperties": ["opacity"]
       }
     ],
     "at-rule-empty-line-before": [
       "always",
       {
-        "except": [
-          "blockless-after-same-name-blockless",
-          "first-nested"
-        ],
-        "ignore": [
-          "after-comment"
-        ]
+        "except": ["blockless-after-same-name-blockless", "first-nested"],
+        "ignore": ["after-comment"]
       }
     ],
     "at-rule-name-case": "lower",
@@ -81,26 +70,16 @@
     "comment-empty-line-before": [
       "always",
       {
-        "except": [
-          "first-nested"
-        ],
-        "ignore": [
-          "stylelint-commands"
-        ]
+        "except": ["first-nested"],
+        "ignore": ["stylelint-commands"]
       }
     ],
     "comment-whitespace-inside": "always",
     "custom-property-empty-line-before": [
       "always",
       {
-        "except": [
-          "after-custom-property",
-          "first-nested"
-        ],
-        "ignore": [
-          "after-comment",
-          "inside-single-line-block"
-        ]
+        "except": ["after-custom-property", "first-nested"],
+        "ignore": ["after-comment", "inside-single-line-block"]
       }
     ],
     "custom-media-pattern": [
@@ -129,14 +108,8 @@
     "declaration-empty-line-before": [
       "always",
       {
-        "except": [
-          "after-declaration",
-          "first-nested"
-        ],
-        "ignore": [
-          "after-comment",
-          "inside-single-line-block"
-        ]
+        "except": ["after-declaration", "first-nested"],
+        "ignore": ["after-comment", "inside-single-line-block"]
       }
     ],
     "font-family-name-quotes": "always-where-recommended",
@@ -181,12 +154,8 @@
     "rule-empty-line-before": [
       "always-multi-line",
       {
-        "except": [
-          "first-nested"
-        ],
-        "ignore": [
-          "after-comment"
-        ]
+        "except": ["first-nested"],
+        "ignore": ["after-comment"]
       }
     ],
     "selector-attribute-brackets-space-inside": "never",

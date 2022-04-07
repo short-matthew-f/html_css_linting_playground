@@ -17,35 +17,21 @@ htmlTextArea.addEventListener("input", () => {
 /* Let the user validate */
 
 const htmlActions = document.querySelector("#html-head .actions");
-htmlActions.addEventListener("click", ({ target }) => {
+htmlActions.addEventListener("click", ({ target }) =>
   validate(target, htmlTextArea.value)
-    .then((response) => {
-      const errorDiv = document.getElementById('error');
-      errorDiv.innerHTML = `<p>
-        ${ response.join('</p><p>')}
-      </p>`;
-    })
-    .catch(console.error);
-});
+);
 
 const cssActions = document.querySelector("#css-head .actions");
-cssActions.addEventListener("click", ({ target }) => {
+cssActions.addEventListener("click", ({ target }) =>
   validate(target, cssTextArea.value)
-    .then((response) => {
-      const errorDiv = document.getElementById('error');
-      errorDiv.innerHTML = `<p>
-        ${ response.join('</p><p>')}
-      </p>`;
-    })
-    .catch(console.error);
-});
+);
 
-function validate(target, text) {
-  if (target.nodeName !== "BUTTON") {
+function validate(targetElement, text) {
+  if (targetElement.nodeName !== "BUTTON") {
     return;
   }
 
-  const url = target.getAttribute("data-url");
+  const url = targetElement.getAttribute("data-url");
 
   return fetch(url, {
     method: "POST",
@@ -53,9 +39,16 @@ function validate(target, text) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ text }),
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .then((response) => {
+      const errorDiv = document.getElementById("error");
+      errorDiv.innerHTML = `<p>
+        ${response.join("</p><p>")}
+      </p>`;
+    })
+    .catch(console.error);
 }
-
 
 /* Populate initial data */
 
