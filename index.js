@@ -8,9 +8,6 @@ const { HTMLHint } = require("htmlhint");
 // Local checking, but doesn't catch as many problems
 const stylelint = require("stylelint");
 
-// Uses a remote call to W3
-var validateCss = require("css-validator");
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -34,17 +31,6 @@ app.post("/html_hint", (req, res, next) => {
   );
 
   res.json(response);
-});
-
-app.post("/validate_css", (req, res, next) => {
-  validateCss({ text: req.body.text }, function (err, data) {
-    const response = [...data.errors, ...data.warnings].map(
-      ({ line, message, errortype }) =>
-        `Error (Line ${line})<br />${encode(message)} (${errortype})`
-    );
-
-    res.json(response);
-  });
 });
 
 app.post("/stylelint", (req, res, next) => {
