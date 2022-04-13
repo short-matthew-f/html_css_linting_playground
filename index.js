@@ -24,8 +24,29 @@ app.use(bodyParser.json());
  * - send it back with res.json()
  */
 
+const customRules = {
+  "attr-lowercase": true,
+  "attr-no-duplication": true,
+  "attr-no-unnecessary-whitespace": true,
+  "attr-unsafe-chars": true,
+  "attr-value-double-quotes": true,
+  "attr-whitespace": true,
+  "alt-require": true,
+  "input-requires-label": true,
+  "tags-check": true,
+  "tag-pair": true,
+  "tag-self-close": true,
+  "tagname-lowercase": true,
+  "tagname-specialchars": true,
+  "src-not-empty": true,
+  "id-unique": true,
+  "inline-script-disabled": true,
+  "space-tab-mixed-disabled": true,
+  "spec-char-escape": true
+}
+
 app.post("/html_hint", (req, res, next) => {
-  const response = HTMLHint.verify(req.body.text).map(
+  const response = HTMLHint.verify(req.body.text, customRules).map(
     ({ line, col, message, rule }) =>
       `Error (Line ${line})<br />${encode(message)} (${rule.id})`
   );

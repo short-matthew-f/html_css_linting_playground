@@ -19,6 +19,7 @@
     "stylelint-config-standard": "^25.0.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "stylelint-config-recommended": "^7.0.0"
   }
 }
