@@ -47,8 +47,8 @@ const customRules = {
 
 app.post("/html_hint", (req, res, next) => {
   const response = HTMLHint.verify(req.body.text, customRules).map(
-    ({ line, col, message, rule }) =>
-      `Error (Line ${line})<br />${encode(message)} (${rule.id})`
+    ({ line, type, message, rule }) =>
+      `${ type.toUpperCase() } (Line ${line})<br />${encode(message)} (${rule.id})`
   );
 
   res.json(response);
@@ -64,8 +64,8 @@ app.post("/stylelint", (req, res, next) => {
         .map((x) => x.warnings)
         .reduce((prev, next) => [...prev, ...next], [])
         .map(
-          ({ line, column, rule, text }) =>
-            `Error (Line ${line})<br />${encode(text)}`
+          ({ line, severity, text }) =>
+            `${ severity.toUpperCase() } (Line ${line})<br />${encode(text)}`
         );
 
       res.json(response);
