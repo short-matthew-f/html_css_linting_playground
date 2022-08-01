@@ -20,13 +20,15 @@ body {
 
   display: grid;
   gap: 10px;
-  grid-template-rows: 5em 1fr 5em 1fr;
+  grid-template-rows: 5em 1fr 5em 1fr 5em 1fr;
   grid-template-columns: 1fr 1fr;
   grid-template-areas:
     "html-head  render-head"
     "html       render"
     "css-head   error-head"
-    "css        error";
+    "css        error"
+    "js-head    error"
+    "js         error";
 }
 
 iframe {
@@ -75,6 +77,16 @@ button {
   background: white;
 }
 
+#js-head {
+  grid-area: js-head;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  border: 1px solid black;
+  background: white;
+}
+
 #render-head {
   grid-area: render-head;
   display: flex;
@@ -101,6 +113,10 @@ button {
 
 #css {
   grid-area: css;
+}
+
+#js {
+  grid-area: js;
 }
 
 #render {

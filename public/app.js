@@ -14,6 +14,14 @@ htmlTextArea.addEventListener("input", () => {
   updateRenderElement();
 });
 
+const jsTextArea = document.getElementById("js");
+
+jsTextArea.addEventListener("input", () => {
+  store();
+  updateRenderElement();
+});
+
+
 /* Let the user validate */
 
 const htmlActions = document.querySelector("#html-head .actions");
@@ -24,6 +32,11 @@ htmlActions.addEventListener("click", ({ target }) =>
 const cssActions = document.querySelector("#css-head .actions");
 cssActions.addEventListener("click", ({ target }) =>
   validate(target, cssTextArea.value)
+);
+
+const jsActions = document.querySelector("#js-head .actions");
+jsActions.addEventListener("click", ({ target }) =>
+  validate(target, jsTextArea.value)
 );
 
 function validate(targetElement, text) {
@@ -74,9 +87,11 @@ function updateRenderElement() {
 function store() {
   localStorage.setItem("cssText", cssTextArea.value);
   localStorage.setItem("htmlText", htmlTextArea.value);
+  localStorage.setItem("jsText", jsTextArea.value);
 }
 
 function retrieve() {
   cssTextArea.value = localStorage.getItem("cssText");
   htmlTextArea.value = localStorage.getItem("htmlText");
+  jsTextArea.value = localStorage.getItem("jsText");
 }

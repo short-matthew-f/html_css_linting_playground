@@ -29,6 +29,29 @@ app.use(bodyParser.json());
  * - send it back with res.json()
  */
 
+const { Linter } = require("eslint");
+const linter = new Linter();
+
+app.post("/eslint", (req, res, next) => {
+  const { text } = req.body;
+  
+  /*
+    Looks like: [{
+      ruleId: null,
+      fatal: true,
+      severity: 2,
+      message: "Parsing error: The keyword 'const' is reserved",
+      line: 1,
+      column: 1
+    }, ...]
+  */
+  const response = linter.verify(text, {
+    rules: { "extends": "eslint:recommended" }
+  }).map(({ line, column, severity, fatal, message }) => `ERROR (Severity: ${ severity }${ fatal ? ', fatal' : ''}) Line ${ line }, Column ${ column }\n${ message }`);
+
+  res.json(response);
+});
+
 /**
  * If you want to change the HTMLHint Rules, edit .htmlhintrc
  */
@@ -61,7 +84,6 @@ app.post("/stylelint", (req, res, next) => {
       const response = resultObject.results
         .map((x) => x.warnings)
         .reduce((prev, next) => [...prev, ...next], [])
-        .map(console.log)
         .map(
           ({ line, severity, text }) =>
             `${ severity.toUpperCase() } (Line ${line})<br />${encode(text)}`
