@@ -1,6 +1,11 @@
+const { readFileSync } = require('fs');
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const { encode } = require("html-entities");
+
+// To compute first and last lines and columns for errors
+const { getRange } = require('./utils.js');
 
 // Local checking, pretty decent
 const { HTMLHint } = require("htmlhint");
@@ -24,36 +29,29 @@ app.use(bodyParser.json());
  * - send it back with res.json()
  */
 
-const customRules = {
-  "attr-lowercase": true,
-  "attr-no-duplication": true,
-  "attr-no-unnecessary-whitespace": true,
-  "attr-unsafe-chars": true,
-  "attr-value-double-quotes": true,
-  "attr-whitespace": true,
-  "alt-require": true,
-  "input-requires-label": true,
-  "tags-check": true,
-  "tag-pair": true,
-  "tag-self-close": true,
-  "tagname-lowercase": true,
-  "tagname-specialchars": true,
-  "src-not-empty": true,
-  "id-unique": true,
-  "inline-script-disabled": true,
-  "space-tab-mixed-disabled": true,
-  "spec-char-escape": true
-}
+/**
+ * If you want to change the HTMLHint Rules, edit .htmlhintrc
+ */
+const customHTMLHintRules = JSON.parse(readFileSync('./.htmlhintrc'))
 
 app.post("/html_hint", (req, res, next) => {
-  const response = HTMLHint.verify(req.body.text, customRules).map(
-    ({ line, type, message, rule }) =>
-      `${ type.toUpperCase() } (Line ${line})<br />${encode(message)} (${rule.id})`
-  );
+  const { text } = req.body;
+
+  const response = HTMLHint.verify(req.body.text, customHTMLHintRules).map(
+    (error) => {
+      // Looks like: { start: { line: 8, character: 4 }, end: { line: 8, character: 23 } }
+      const { start, end } = getRange(error, text.split('\n'));
+
+      const { type, message, rule } = error;
+      return `${ type.toUpperCase() } [LINE ${ start.line } : COL ${ start.character } - LINE ${ end.line } : COL ${ end.character }]<br />${encode(message)} (${rule.id})`;
+    });
 
   res.json(response);
 });
 
+/**
+ * If you want to change the Stylelint rules, edit .stylelintrc.json
+ */
 app.post("/stylelint", (req, res, next) => {
   stylelint
     .lint({
@@ -63,6 +61,7 @@ app.post("/stylelint", (req, res, next) => {
       const response = resultObject.results
         .map((x) => x.warnings)
         .reduce((prev, next) => [...prev, ...next], [])
+        .map(console.log)
         .map(
           ({ line, severity, text }) =>
             `${ severity.toUpperCase() } (Line ${line})<br />${encode(text)}`
