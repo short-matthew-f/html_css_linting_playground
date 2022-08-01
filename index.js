@@ -33,20 +33,14 @@ const { Linter } = require("eslint");
 const linter = new Linter();
 
 app.post("/eslint", (req, res, next) => {
-  const { text } = req.body;
-  
-  /*
-    Looks like: [{
-      ruleId: null,
-      fatal: true,
-      severity: 2,
-      message: "Parsing error: The keyword 'const' is reserved",
-      line: 1,
-      column: 1
-    }, ...]
-  */
-  const response = linter.verify(text, {
-    rules: { "extends": "eslint:recommended" }
+  const response = linter.verify(req.body.text, {
+    rules: { "extends": "eslint:recommended" },
+    parserOptions: {
+      ecmaVersion: "latest"
+    },
+    env: {
+      "es6": true
+    }
   }).map(({ line, column, severity, fatal, message }) => `ERROR (Severity: ${ severity }${ fatal ? ', fatal' : ''}) Line ${ line }, Column ${ column }\n${ message }`);
 
   res.json(response);
