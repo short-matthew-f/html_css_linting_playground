@@ -31,18 +31,10 @@ app.use(bodyParser.json());
 
 const { Linter } = require("eslint");
 const linter = new Linter();
+const eslintRules = require('./eslint.config.js');
 
 app.post("/eslint", (req, res, next) => {
-  const response = linter.verify(req.body.text, {
-    rules: { "extends": "eslint:recommended" },
-    parserOptions: {
-      ecmaVersion: "latest"
-    },
-    env: {
-      "es6": true
-    }
-  }).map(({ line, column, severity, fatal, message }) => `ERROR (Severity: ${ severity }${ fatal ? ', fatal' : ''}) Line ${ line }, Column ${ column }\n${ message }`);
-
+  const response = linter.verify(req.body.text, eslintRules).map(({ line, column, severity, fatal, message }) => `ERROR (Severity: ${ severity }${ fatal ? ', fatal' : ''}) Line ${ line }, Column ${ column }\n${ message }`);
   res.json(response);
 });
 
