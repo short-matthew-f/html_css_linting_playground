@@ -34,7 +34,8 @@ const linter = new Linter();
 const eslintRules = require('./eslint.config.js');
 
 app.post("/eslint", (req, res, next) => {
-  const response = linter.verify(req.body.text, eslintRules).map(({ line, column, severity, fatal, message }) => `ERROR (Severity: ${ severity }${ fatal ? ', fatal' : ''}) Line ${ line }, Column ${ column }\n${ message }`);
+  console.log(linter.verify(req.body.text, eslintRules))
+  const response = linter.verify(req.body.text, eslintRules).map(({ line, column, endLine, endColumn, severity, fatal, message }) => `ERROR (Severity: ${ severity }${ fatal ? ', fatal' : ''}) [LINE ${ line } : COL ${ column } - LINE ${ endLine } : COL ${ endColumn }]<br />${ message }`);
   res.json(response);
 });
 
