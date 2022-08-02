@@ -21,7 +21,6 @@ jsTextArea.addEventListener("input", () => {
   updateRenderElement();
 });
 
-
 /* Let the user validate */
 
 const htmlActions = document.querySelector("#html-head .actions");

@@ -1,11 +1,11 @@
-const { readFileSync } = require('fs');
+const { readFileSync } = require("fs");
 
 const express = require("express");
 const bodyParser = require("body-parser");
 const { encode } = require("html-entities");
 
 // To compute first and last lines and columns for errors
-const { getRange } = require('./utils.js');
+const { getRange } = require("./utils.js");
 
 // Local checking, pretty decent
 const { HTMLHint } = require("htmlhint");
@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 
 /**
  * To add to the below endpoints you should:
- * 
+ *
  * - create a new button in index.html with data-url equal to the endpoint
  * - call the appropriate linter
  * - create an array of inner html values from the response to be passed back
@@ -31,18 +31,24 @@ app.use(bodyParser.json());
 
 const { Linter } = require("eslint");
 const linter = new Linter();
-const eslintRules = require('./eslint.config.js');
+const eslintRules = require("./eslint.config.js");
 
 app.post("/eslint", (req, res, next) => {
-  console.log(linter.verify(req.body.text, eslintRules))
-  const response = linter.verify(req.body.text, eslintRules).map(({ line, column, endLine, endColumn, severity, fatal, message }) => `ERROR (Severity: ${ severity }${ fatal ? ', fatal' : ''}) [LINE ${ line } : COL ${ column } - LINE ${ endLine } : COL ${ endColumn }]<br />${ message }`);
+  const response = linter
+    .verify(req.body.text, eslintRules)
+    .map(
+      ({ line, column, endLine, endColumn, severity, fatal, message }) =>
+        `ERROR (Severity: ${severity}${
+          fatal ? ", fatal" : ""
+        }) [LINE ${line} : COL ${column} - LINE ${endLine} : COL ${endColumn}]<br />${message}`
+    );
   res.json(response);
 });
 
 /**
  * If you want to change the HTMLHint Rules, edit .htmlhintrc
  */
-const customHTMLHintRules = JSON.parse(readFileSync('./.htmlhintrc'))
+const customHTMLHintRules = JSON.parse(readFileSync("./.htmlhintrc"));
 
 app.post("/html_hint", (req, res, next) => {
   const { text } = req.body;
@@ -50,11 +56,16 @@ app.post("/html_hint", (req, res, next) => {
   const response = HTMLHint.verify(req.body.text, customHTMLHintRules).map(
     (error) => {
       // Looks like: { start: { line: 8, character: 4 }, end: { line: 8, character: 23 } }
-      const { start, end } = getRange(error, text.split('\n'));
+      const { start, end } = getRange(error, text.split("\n"));
 
       const { type, message, rule } = error;
-      return `${ type.toUpperCase() } [LINE ${ start.line } : COL ${ start.character } - LINE ${ end.line } : COL ${ end.character }]<br />${encode(message)} (${rule.id})`;
-    });
+      return `${type.toUpperCase()} [LINE ${start.line} : COL ${
+        start.character
+      } - LINE ${end.line} : COL ${end.character}]<br />${encode(message)} (${
+        rule.id
+      })`;
+    }
+  );
 
   res.json(response);
 });
@@ -73,7 +84,7 @@ app.post("/stylelint", (req, res, next) => {
         .reduce((prev, next) => [...prev, ...next], [])
         .map(
           ({ line, severity, text }) =>
-            `${ severity.toUpperCase() } (Line ${line})<br />${encode(text)}`
+            `${severity.toUpperCase()} (Line ${line})<br />${encode(text)}`
         );
 
       res.json(response);
