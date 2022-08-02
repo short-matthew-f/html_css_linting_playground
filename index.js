@@ -36,6 +36,11 @@ const eslintRules = require("./eslint.config.js");
 app.post("/eslint", (req, res, next) => {
   const response = linter
     .verify(req.body.text, eslintRules)
+    .sort((resOne, resTwo) =>
+      resOne.line - resTwo.line === 0
+        ? resOne.column - resTwo.column
+        : resOne.line - resTwo.line
+    )
     .map(
       ({ line, column, endLine, endColumn, severity, fatal, message }) =>
         `ERROR (Severity: ${severity}${
@@ -55,8 +60,18 @@ const customHTMLHintRules = JSON.parse(readFileSync("./.htmlhintrc"));
 app.post("/html_hint", (req, res, next) => {
   const { text } = req.body;
 
-  const response = HTMLHint.verify(req.body.text, customHTMLHintRules).map(
-    (error) => {
+  const response = HTMLHint.verify(req.body.text, customHTMLHintRules)
+    .sort((resOne, resTwo) => {
+      const rangeOne = getRange(resOne, text.split("\n"));
+      const rangeTwo = getRange(resTwo, text.split("\n"));
+
+      if (rangeOne.start.line === rangeTwo.start.line) {
+        return rangeOne.start.column - rangeTwo.start.column;
+      }
+
+      return rangeOne.start.line - rangeTwo.start.line;
+    })
+    .map((error) => {
       // Looks like: { start: { line: 8, character: 4 }, end: { line: 8, character: 23 } }
       const { start, end } = getRange(error, text.split("\n"));
 
@@ -66,8 +81,7 @@ app.post("/html_hint", (req, res, next) => {
       } - LINE ${end.line} : COL ${end.character}]<br />${encode(message)} (${
         rule.id
       })`;
-    }
-  );
+    });
 
   res.json(response);
 });
@@ -81,20 +95,14 @@ app.post("/stylelint", (req, res, next) => {
       code: req.body.text,
     })
     .then((resultObject) => {
-      /*
-      {
-      line: 1,
-      column: 11,
-      endLine: 1,
-      endColumn: 14,
-      rule: 'color-no-invalid-hex',
-      severity: 'error',
-      text: 'Unexpected invalid hex color "#ff" (color-no-invalid-hex)'
-    }
-    */
       const response = resultObject.results
         .map((x) => x.warnings)
         .reduce((prev, next) => [...prev, ...next], [])
+        .sort((resOne, resTwo) =>
+          resOne.line - resTwo.line === 0
+            ? resOne.column - resTwo.column
+            : resOne.line - resTwo.line
+        )
         .map(
           ({ line, column, endLine, endColumn, severity, text }) =>
             `${severity.toUpperCase()} [LINE ${line} : COL ${column} - LINE ${endLine} : COL ${endColumn}]<br />${encode(
