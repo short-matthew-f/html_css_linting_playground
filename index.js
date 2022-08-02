@@ -40,7 +40,9 @@ app.post("/eslint", (req, res, next) => {
       ({ line, column, endLine, endColumn, severity, fatal, message }) =>
         `ERROR (Severity: ${severity}${
           fatal ? ", fatal" : ""
-        }) [LINE ${line} : COL ${column} - LINE ${endLine} : COL ${endColumn}]<br />${message}`
+        }) [LINE ${line} : COL ${column} - LINE ${endLine} : COL ${endColumn}]<br />${encode(
+          message
+        )}`
     );
   res.json(response);
 });
@@ -79,12 +81,25 @@ app.post("/stylelint", (req, res, next) => {
       code: req.body.text,
     })
     .then((resultObject) => {
+      /*
+      {
+      line: 1,
+      column: 11,
+      endLine: 1,
+      endColumn: 14,
+      rule: 'color-no-invalid-hex',
+      severity: 'error',
+      text: 'Unexpected invalid hex color "#ff" (color-no-invalid-hex)'
+    }
+    */
       const response = resultObject.results
         .map((x) => x.warnings)
         .reduce((prev, next) => [...prev, ...next], [])
         .map(
-          ({ line, severity, text }) =>
-            `${severity.toUpperCase()} (Line ${line})<br />${encode(text)}`
+          ({ line, column, endLine, endColumn, severity, text }) =>
+            `${severity.toUpperCase()} [LINE ${line} : COL ${column} - LINE ${endLine} : COL ${endColumn}]<br />${encode(
+              text
+            )}`
         );
 
       res.json(response);
