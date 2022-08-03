@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const { encode } = require("html-entities");
 
 // To compute first and last lines and columns for errors
-const { getRange } = require("./utils.js");
+const { getRange, makeErrorMessage } = require("./utils.js");
 
 // Local checking, pretty decent
 const { HTMLHint } = require("htmlhint");
@@ -42,13 +42,29 @@ app.post("/eslint", (req, res, next) => {
         : resOne.line - resTwo.line
     )
     .map(
-      ({ line, column, endLine, endColumn, severity, fatal, message }) =>
-        `ERROR (Severity: ${severity}${
-          fatal ? ", fatal" : ""
-        }) [LINE ${line} : COL ${column} - LINE ${endLine} : COL ${endColumn}]<br />${encode(
-          message
-        )}`
+      ({
+        line,
+        column,
+        endLine,
+        endColumn,
+        severity,
+        fatal,
+        message,
+        ruleId,
+      }) =>
+        makeErrorMessage({
+          line,
+          column,
+          endLine,
+          endColumn,
+          text: encode(message),
+          errorType: "Error",
+          optionalMessage: ruleId
+            ? `(${ruleId}) (Severity ${severity}${fatal ? ", fatal" : ""})`
+            : `(Severity ${severity}${fatal ? ", fatal" : ""})`,
+        })
     );
+
   res.json(response);
 });
 
@@ -74,13 +90,17 @@ app.post("/html_hint", (req, res, next) => {
     .map((error) => {
       // Looks like: { start: { line: 8, character: 4 }, end: { line: 8, character: 23 } }
       const { start, end } = getRange(error, text.split("\n"));
-
       const { type, message, rule } = error;
-      return `${type.toUpperCase()} [LINE ${start.line} : COL ${
-        start.character
-      } - LINE ${end.line} : COL ${end.character}]<br />${encode(message)} (${
-        rule.id
-      })`;
+
+      return makeErrorMessage({
+        line: start.line,
+        column: start.character,
+        endLine: end.line,
+        endColumn: end.character,
+        text: encode(message),
+        errorType: type === "error" ? "Error" : "Warning",
+        optionalMessage: `(${rule.id})`,
+      });
     });
 
   res.json(response);
@@ -103,11 +123,16 @@ app.post("/stylelint", (req, res, next) => {
             ? resOne.column - resTwo.column
             : resOne.line - resTwo.line
         )
-        .map(
-          ({ line, column, endLine, endColumn, severity, text }) =>
-            `${severity.toUpperCase()} [LINE ${line} : COL ${column} - LINE ${endLine} : COL ${endColumn}]<br />${encode(
-              text
-            )}`
+        .map(({ line, column, endLine, endColumn, severity, text, rule }) =>
+          makeErrorMessage({
+            line,
+            column,
+            endLine,
+            endColumn,
+            text: text.replace(`(${rule})`, ""),
+            optionalMessage: `(${rule})`,
+            errorType: severity === "error" ? "Error" : "Warning",
+          })
         );
 
       res.json(response);
