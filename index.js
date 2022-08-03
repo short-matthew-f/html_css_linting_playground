@@ -82,7 +82,7 @@ app.post("/html_hint", (req, res, next) => {
       const rangeTwo = getRange(resTwo, text.split("\n"));
 
       if (rangeOne.start.line === rangeTwo.start.line) {
-        return rangeOne.start.column - rangeTwo.start.column;
+        return rangeOne.start.character - rangeTwo.start.character;
       }
 
       return rangeOne.start.line - rangeTwo.start.line;
