@@ -108,6 +108,7 @@ button {
 #error {
   font-family: monospace;
   background-color:#ccf;
+  font-size: 1.4em;
   color: #b00;
   grid-area: error;
   overflow-y: scroll;
