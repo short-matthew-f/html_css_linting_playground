@@ -2,7 +2,7 @@
  * From https://github.com/microsoft/vscode-htmlhint/blob/main/htmlhint-server/src/server.ts#L37
  * Modified to be 1-indexed
  */
-function getRange(error, lines) {
+function getRange(error, lines, suppressLog) {
   let line = lines[error.line - 1];
   let isWhitespace = false;
   let curr = error.col;

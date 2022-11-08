@@ -34,6 +34,8 @@ const linter = new Linter();
 const eslintRules = require("./eslint.config.js");
 
 app.post("/eslint", (req, res, next) => {
+  console.log(linter.verify(req.body.text, eslintRules));
+
   const response = linter
     .verify(req.body.text, eslintRules)
     .sort((resOne, resTwo) =>
@@ -71,15 +73,17 @@ app.post("/eslint", (req, res, next) => {
 /**
  * If you want to change the HTMLHint Rules, edit .htmlhintrc
  */
+const tsTagsCheck = require('./ts-tags-check');
+HTMLHint.addRule(tsTagsCheck);
+
 const customHTMLHintRules = JSON.parse(readFileSync("./.htmlhintrc"));
 
 app.post("/html_hint", (req, res, next) => {
   const { text } = req.body;
-
   const response = HTMLHint.verify(req.body.text, customHTMLHintRules)
     .sort((resOne, resTwo) => {
-      const rangeOne = getRange(resOne, text.split("\n"));
-      const rangeTwo = getRange(resTwo, text.split("\n"));
+      const rangeOne = getRange(resOne, text.split("\n"), true);
+      const rangeTwo = getRange(resTwo, text.split("\n"), true);
 
       if (rangeOne.start.line === rangeTwo.start.line) {
         return rangeOne.start.character - rangeTwo.start.character;
@@ -110,6 +114,8 @@ app.post("/html_hint", (req, res, next) => {
  * If you want to change the Stylelint rules, edit .stylelintrc.json
  */
 app.post("/stylelint", (req, res, next) => {
+  stylelint.lint({ code: req.body.text }).then(result => console.log(JSON.stringify(result)))
+
   stylelint
     .lint({
       code: req.body.text,
